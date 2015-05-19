@@ -1,2 +1,1 @@
-Typed Stack is a LIFO stack implementation that allows for either mutable or
-immutable structures.
+Typed Stack is a stack implementation written in Typed Racket.
