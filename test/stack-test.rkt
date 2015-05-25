@@ -101,7 +101,8 @@
 (let ([stk1 (stack '(1 2 3))]
       [stk2 (stack '(1 2 3))])
   (pop-nip! stk2)
-  (check-true (stack=? (pop-nip stk1) stk2)))
+  (check-true (stack=? (pop-nip stk1) stk2))
+  (check-true (stack=? (pop-nip stk1) (stack '(1 3)))))
 
 ; push-tuck
 (check-exn exn:fail:contract? (λ () (push-tuck (make-stack))))

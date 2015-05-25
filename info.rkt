@@ -1,14 +1,17 @@
 #lang setup/infotab
 
 (define name "typed/stack")
+(define scribblings '(("doc/typed-stack.scrbl" ())))
 
 (define blurb '("Typed Racket implementation of a stack."))
 (define primary-file "main.rkt")
 (define homepage "https://github.com/lehitoskin/typed-stack/")
 
-(define version "0.0")
-(define release-notes '("Initial release."))
+(define version "0.1")
+(define release-notes '("Filled out library."))
 
 (define required-core-version "6.0.1")
 
-(define deps '("typed-racket-lib"))
+(define deps '("typed-racket-lib"
+               "scribble-lib"))
+(define build-deps '("racket-doc"))
