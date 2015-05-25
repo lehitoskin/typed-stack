@@ -133,27 +133,13 @@
     (cond [(< (stack-length stk) 3)
            (raise-argument-error 'reverse-rotate "stack-length >= 3"
                                  (stack-length stk))]
-          [else
-           #|(define one (top stk))
-           (define two (top (pop stk)))
-           (define three (top (pop (pop stk))))
-           (push (push (push (pop (pop (pop stk))) one) three) two)|#
-           (roll (roll stk 2) 2)]))
+          [else (roll (roll stk 2) 2)]))
   
   (define (reverse-rotate! [stk : stack]) : Void
     (cond [(< (stack-length stk) 3)
            (raise-argument-error 'reverse-rotate! "stack-length >= 3"
                                  (stack-length stk))]
           [else
-           #|(define one (top stk))
-           (define two (top (pop stk)))
-           (define three (top (pop (pop stk))))
-           (pop! stk)
-           (pop! stk)
-           (pop! stk)
-           (push! stk one)
-           (push! stk three)
-           (push! stk two)|#
            (roll! stk 2)
            (roll! stk 2)]))
   
@@ -202,7 +188,7 @@
   
   (define (push-pick! [stk : stack] [i : Index]) : Void
     (define stk-len (stack-length stk))
-    (cond [(>= i stk-len )
+    (cond [(>= i stk-len)
            (raise-argument-error 'push-pick! (format "i < ~a" stk-len) i)]
           [else
            (define val (list-ref (stack->list stk) i))
