@@ -4,81 +4,104 @@
   ; LIFO stack
   ; "top" refers to the beginning of the list
   ; "bottom" or "end" refers to the end of the list
+  ;
+  ; TODO: make-stack, push*, push*! allow for typing of dot notation
+  ;
   (provide (all-defined-out))
   
-  (struct stack ([contents : (Listof Any)]) #:mutable)
+  (struct (A) stack ([contents : (Listof A)]) #:mutable)
   
   ; produces an empty, mutable stack
-  (define (make-stack) : stack
-    (stack empty))
+  (: make-stack (All (A) ((Listof A) -> (stack A))))
+  (define (make-stack lst)
+    (stack lst))
   
   ; creates a list from the stack as-is
-  (define (stack->list [stk : stack]) : (Listof Any)
+  (: stack->list (All (A) ((stack A) -> (Listof A))))
+  (define (stack->list stk)
     (stack-contents stk))
   
   ; builds a string representation of the stack
   ; with ordering from bottom to top
-  (define (stack->string [stk : stack]) : String
+  (: stack->string (All (A) ((stack A) -> String)))
+  (define (stack->string stk)
     (with-output-to-string (λ () (printf "~a" (reverse (stack->list stk))))))
   
-  (define (stack-empty? [stk : stack]) : Boolean
+  (: stack-empty? (All (A) ((stack A) -> Boolean)))
+  (define (stack-empty? stk)
     (empty? (stack->list stk)))
   
-  (define (stack-length [stk : stack]) : Nonnegative-Integer
+  (: stack-length (All (A) ((stack A) -> Nonnegative-Integer)))
+  (define (stack-length stk)
     (length (stack->list stk)))
   
-  (define (stack=? [stk1 : stack] [stk2 : stack]) : Boolean
+  (: stack=? (All (A) ((stack A) (stack A) -> Boolean)))
+  (define (stack=? stk1 stk2)
     (and (stack? stk1) (stack? stk2)
          (equal? (stack->list stk1) (stack->list stk2))))
   
-  (define (top [stk : stack]) : Any
+  (: top (All (A) ((stack A) -> A)))
+  (define (top stk)
     (if (stack-empty? stk)
-        empty
+        (raise-argument-error 'top "stack-length >= 1" 0)
         (first (stack->list stk))))
   
   ; returns a sequence to use with stacks
-  (define (in-stack [stk : stack]) : (Sequenceof Any)
+  (: in-stack (All (A) ((stack A) -> (Sequenceof A))))
+  (define (in-stack stk)
     (in-list (stack->list stk)))
   
   ; pops the stack
-  (define (pop [stk : stack]) : stack
+  (: pop (All (A) ((stack A) -> (stack A))))
+  (define (pop stk)
     (if (stack-empty? stk)
         stk
         (stack (rest (stack->list stk)))))
   
-  (define (pop! [stk : stack]) : Void
+  (: pop! (All (A) ((stack A) -> Void)))
+  (define (pop! stk)
     (unless (stack-empty? stk)
       (set-stack-contents! stk (rest (stack->list stk)))))
   
-  (define (push [stk : stack] [val : Any]) : stack
+  (: push (All (A) ((stack A) A -> (stack A))))
+  (define (push stk val)
     (stack (cons val (stack->list stk))))
   
-  (define (push! [stk : stack] [val : Any]) : Void
+  (: push! (All (A) ((stack A) A -> Void)))
+  (define (push! stk val)
     (set-stack-contents! stk (cons val (stack->list stk))))
   
   ; push multiple values to the stack from right to left
   ; the order in the procedure call is the same as the
   ; stack order
-  (define (push* [stk : stack] . lst) : stack
+  ;(define (push* stk . lst ...)
+  (: push* (All (A) ((stack A) (Listof A) -> (stack A))))
+  (define (push* stk lst)
     (stack (append lst (stack->list stk))))
   
-  (define (push*! [stk : stack] . lst) : Void
+  ;(define (push*! stk . lst ...)
+  (: push*! (All (A) ((stack A) (Listof A) -> Void)))
+  (define (push*! stk lst)
     (set-stack-contents! stk (append lst (stack->list stk))))
   
   ; push a copy of the top of the stack onto the stack
-  (define (push-dup [stk : stack]) : stack
+  (: push-dup (All (A) ((stack A) -> (stack A))))
+  (define (push-dup stk)
     (push stk (top stk)))
   
-  (define (push-dup! [stk : stack]) : Void
+  (: push-dup! (All (A) ((stack A) -> Void)))
+  (define (push-dup! stk)
     (push! stk (top stk)))
   
   ; removes all items from the stack
-  (define (pop-all! [stk : stack]) : Void
+  (: pop-all! (All (A) ((stack A) -> Void)))
+  (define (pop-all! stk)
     (unless (stack-empty? stk)
       (set-stack-contents! stk empty)))
   
   ; swaps the location of the two topmost items
-  (define (swap [stk : stack]) : stack
+  (: swap (All (A) ((stack A) -> (stack A))))
+  (define (swap stk)
     (cond [(< (stack-length stk) 2)
            (raise-argument-error 'swap "stack-length >= 2" (stack-length stk))]
           [else
@@ -86,7 +109,8 @@
            (define two (top (pop stk)))
            (push (push (pop (pop stk)) one) two)]))
   
-  (define (swap! [stk : stack]) : Void
+  (: swap! (All (A) ((stack A) -> Void)))
+  (define (swap! stk)
     (cond [(< (stack-length stk) 2)
            (raise-argument-error 'swap! "stack-length >= 2" (stack-length stk))]
           [else
@@ -98,7 +122,8 @@
            (push! stk two)]))
   
   ; push a copy of the second topmost item onto the stack
-  (define (push-over [stk : stack]) : stack
+  (: push-over (All (A) ((stack A) -> (stack A))))
+  (define (push-over stk)
     (cond [(< (stack-length stk) 2)
            (raise-argument-error 'push-over "stack-length >= 2"
                                  (stack-length stk))]
@@ -106,7 +131,8 @@
            (define two (top (pop stk)))
            (push stk two)]))
   
-  (define (push-over! [stk : stack]) : Void
+  (: push-over! (All (A) ((stack A) -> Void)))
+  (define (push-over! stk)
     (cond [(< (stack-length stk) 2)
            (raise-argument-error 'push-over! "stack-length >= 2"
                                  (stack-length stk))]
@@ -116,12 +142,14 @@
   
   ; rotates the top three items downward
   ; (stack '(3 2 1)) -> (stack '(1 3 2))
-  (define (rotate [stk : stack]) : stack
+  (: rotate (All (A) ((stack A) -> (stack A))))
+  (define (rotate stk)
     (cond [(< (stack-length stk) 3)
            (raise-argument-error 'rotate "stack-length >= 3" (stack-length stk))]
           [else (roll stk 2)]))
   
-  (define (rotate! [stk : stack]) : Void
+  (: rotate! (All (A) ((stack A) -> Void)))
+  (define (rotate! stk)
     (cond [(< (stack-length stk) 3)
            (raise-argument-error 'rotate! "stack-length >= 3" (stack-length stk))]
           [else (roll! stk 2)]))
@@ -129,13 +157,15 @@
   ; rotates the top three items upward
   ; (stack '(3 2 1)) -> (stack '(2 1 3))
   ; equivalent to rotating twice
-  (define (reverse-rotate [stk : stack]) : stack
+  (: reverse-rotate (All (A) ((stack A) -> (stack A))))
+  (define (reverse-rotate stk)
     (cond [(< (stack-length stk) 3)
            (raise-argument-error 'reverse-rotate "stack-length >= 3"
                                  (stack-length stk))]
           [else (roll (roll stk 2) 2)]))
   
-  (define (reverse-rotate! [stk : stack]) : Void
+  (: reverse-rotate! (All (A) ((stack A) -> Void)))
+  (define (reverse-rotate! stk)
     (cond [(< (stack-length stk) 3)
            (raise-argument-error 'reverse-rotate! "stack-length >= 3"
                                  (stack-length stk))]
@@ -144,14 +174,16 @@
            (roll! stk 2)]))
   
   ; removes the second topmost item from the stack
-  (define (pop-nip [stk : stack]) : stack
+  (: pop-nip (All (A) ((stack A) -> (stack A))))
+  (define (pop-nip stk)
     (cond [(< (stack-length stk) 2)
            (raise-argument-error 'pop-nip "stack-length >= 2" (stack-length stk))]
           [else
            (define val (top stk))
            (push (pop (pop stk)) val)]))
   
-  (define (pop-nip! [stk : stack]) : Void
+  (: pop-nip! (All (A) ((stack A) -> Void)))
+  (define (pop-nip! stk)
     (cond [(< (stack-length stk) 2)
            (raise-argument-error 'pop-nip! "stack-length >= 2"
                                  (stack-length stk))]
@@ -162,14 +194,16 @@
            (push! stk val)]))
   
   ; swaps the top two items and then pushes a copy of the former top item
-  (define (push-tuck [stk : stack]) : stack
+  (: push-tuck (All (A) ((stack A) -> (stack A))))
+  (define (push-tuck stk)
     (cond [(< (stack-length stk) 2)
            (raise-argument-error 'push-tuck "stack-length >= 2"
                                  (stack-length stk))]
           [else
            (push-over (swap stk))]))
   
-  (define (push-tuck! [stk : stack]) : Void
+  (: push-tuck! (All (A) ((stack A) -> Void)))
+  (define (push-tuck! stk)
     (cond [(< (stack-length stk) 2)
            (raise-argument-error 'push-tuck! "stack-length >= 2"
                                  (stack-length stk))]
@@ -178,7 +212,8 @@
            (push-over! stk)]))
   
   ; pushes a copy of the specified index
-  (define (push-pick [stk : stack] [i : Index]) : stack
+  (: push-pick (All (A) ((stack A) Nonnegative-Integer -> (stack A))))
+  (define (push-pick stk i)
     (define stk-len (stack-length stk))
     (cond [(>= i stk-len)
            (raise-argument-error 'push-pick! (format "i < ~a" stk-len) i)]
@@ -186,7 +221,8 @@
            (define val (list-ref (stack->list stk) i))
            (push stk val)]))
   
-  (define (push-pick! [stk : stack] [i : Index]) : Void
+  (: push-pick! (All (A) ((stack A) Nonnegative-Integer -> Void)))
+  (define (push-pick! stk i)
     (define stk-len (stack-length stk))
     (cond [(>= i stk-len)
            (raise-argument-error 'push-pick! (format "i < ~a" stk-len) i)]
@@ -195,7 +231,8 @@
            (push! stk val)]))
   
   ; removes the item at the index and pushes to the top of the stack
-  (define (roll [stk : stack] [i : Index]) : stack
+  (: roll (All (A) ((stack A) Nonnegative-Integer -> (stack A))))
+  (define (roll stk i)
     (define stk-len (stack-length stk))
     (cond [(>= i stk-len)
            (raise-argument-error 'roll (format "i < ~a" stk-len) i)]
@@ -205,7 +242,8 @@
            (define-values (a b) (split-at lst i))
            (push (stack (append a (cdr b))) val)]))
   
-  (define (roll! [stk : stack] [i : Index]) : Void
+  (: roll! (All (A) ((stack A) Nonnegative-Integer -> Void)))
+  (define (roll! stk i)
     (define stk-len (stack-length stk))
     (cond [(>= i stk-len)
            (raise-argument-error 'roll! (format "i < ~a" stk-len) i)]
