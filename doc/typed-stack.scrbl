@@ -13,7 +13,7 @@
 
 @;@table-of-contents[]
 
-@defstruct[Stack ([contents (Listof A)]) #:mutable]{
+@defstruct*[Stack ([contents (Listof A)]) #:mutable]{
   This is the basis of the library. The core is a list that gets manipulated
   through the various procedures. The "top" or "beginning" of the stack refers
   to the first element of the contents list, while the "bottom" or "end" of the
