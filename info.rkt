@@ -12,6 +12,8 @@
 
 (define required-core-version "6.0.1")
 
-(define deps '("typed-racket-lib"
+(define deps '("base"
+               "typed-racket-more"
+               "typed-racket-lib"
                "scribble-lib"))
 (define build-deps '("racket-doc"))
