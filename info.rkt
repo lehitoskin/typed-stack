@@ -1,6 +1,6 @@
 #lang setup/infotab
 
-(define name "typed/stack")
+(define name "typed-stack")
 (define scribblings '(("doc/typed-stack.scrbl" ())))
 
 (define blurb '("Typed Racket implementation of a stack."))

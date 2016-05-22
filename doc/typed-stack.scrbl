@@ -82,7 +82,7 @@ was modified while the procedures that mutate state will return @racket[Void].
 
 @deftogether[(@defproc[(push-dup [stk (Stack A)]) (Stack A)]
               @defproc[(push-dup! [stk (Stack A)]) Void])]{
-  Pushes a copy of the top item onto the stack. Will fail if
+  Pushes a copy of the top item onto the stack. Will fail if the stack is empty.
 }
 
 @defproc[(pop-all! [stk (Stack A)]) Void]{
@@ -91,7 +91,7 @@ was modified while the procedures that mutate state will return @racket[Void].
 
 @deftogether[(@defproc[(swap [stk (Stack A)]) (Stack A)]
               @defproc[(swap! [stk (Stack A)]) Void])]{
-  Swaps the top two items in the stack. Will fail if
+  Swaps the top two items in the stack. Will fail if the stack is empty.
 }
 
 @deftogether[(@defproc[(push-over [stk (Stack A)]) (Stack A)]
@@ -141,7 +141,7 @@ was modified while the procedures that mutate state will return @racket[Void].
 The code in this package and this documentation is under the BSD 3-clause.
 
 @verbatim{
-Copyright (c) 2015, Lehi Toskin
+Copyright (c) 2015 - 2016, Lehi Toskin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
