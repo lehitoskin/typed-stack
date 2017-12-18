@@ -3,7 +3,7 @@
 @(require (for-label typed/racket/base
                      "../main.rkt"))
 
-@title{@bold{Typed-Stack}: A Typed Racket stack library}
+@title{Typed-Stack: A Typed Racket stack library}
 @author{Lehi Toskin}
 
 @defmodule[typed-stack]{
