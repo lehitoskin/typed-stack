@@ -13,7 +13,7 @@
            push-pick push-pick! roll roll! Stack
            (rename-out [Stack? stack?]))
   
-  (struct (A) Stack ([contents : (Listof A)]) #:mutable)
+  (struct (A) Stack ([contents : (Listof A)]) #:mutable #:transparent)
   
   ; produces a mutable stack
   (: make-stack (All (A) (A * -> (Stack A))))
