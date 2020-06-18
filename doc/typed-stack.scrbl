@@ -64,9 +64,10 @@ was modified while the procedures that mutate state will return @racket[Void].
   Returns a sequence to iterate over the items in the stack from top to bottom.
 }
 
-@deftogether[(@defproc[(pop [stk (Stack A)]) (Stack A)]
-              @defproc[(pop! [stk (Stack A)]) Void])]{
-  Pops the top item of the stack.
+@deftogether[(@defproc[(pop [stk (Stack A)]) (Values A (Stack A))]
+              @defproc[(pop! [stk (Stack A)]) A])]{
+  Pops the top item of the stack. @racket[pop] will return the @racket[values] of the top of the
+  stack as well as the remainder of the stack. @racket[pop!] will only return the top.
 }
 
 @deftogether[(@defproc[(push [stk (Stack A)] [val A]) (Stack A)]
@@ -141,7 +142,7 @@ was modified while the procedures that mutate state will return @racket[Void].
 The code in this package and this documentation is under the BSD 3-clause.
 
 @verbatim{
-Copyright (c) 2015 - 2016, Lehi Toskin
+Copyright (c) 2015 - 2020, Lehi Toskin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
