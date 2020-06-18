@@ -59,16 +59,15 @@
     (in-list (stack->list stk)))
   
   ; pops the stack
-  (: pop (All (A) ((Stack A) -> (Stack A))))
+  (: pop (All (A) ((Stack A) -> (Values A (Stack A)))))
   (define (pop stk)
-    (if (stack-empty? stk)
-        stk
-        (Stack (rest (stack->list stk)))))
+    (values (top stk) (Stack (rest (stack->list stk)))))
   
-  (: pop! (All (A) ((Stack A) -> Void)))
+  (: pop! (All (A) ((Stack A) -> A)))
   (define (pop! stk)
-    (unless (stack-empty? stk)
-      (set-Stack-contents! stk (rest (stack->list stk)))))
+    (define t (top stk))
+    (set-Stack-contents! stk (rest (stack->list stk)))
+    t)
   
   (: push (All (A) ((Stack A) A -> (Stack A))))
   (define (push stk val)
@@ -110,19 +109,18 @@
     (cond [(< (stack-length stk) 2)
            (raise-argument-error 'swap "stack-length >= 2" (stack-length stk))]
           [else
-           (define one (top stk))
-           (define two (top (pop stk)))
-           (push (push (pop (pop stk)) one) two)]))
+           (define-values (one rst1) (pop stk))
+           (define two (top rst1))
+           (define-values (three rst2) (pop rst1))
+           (push (push rst2 one) two)]))
   
   (: swap! (All (A) ((Stack A) -> Void)))
   (define (swap! stk)
     (cond [(< (stack-length stk) 2)
            (raise-argument-error 'swap! "stack-length >= 2" (stack-length stk))]
           [else
-           (define one (top stk))
-           (define two (top (pop stk)))
-           (pop! stk)
-           (pop! stk)
+           (define one (pop! stk))
+           (define two (pop! stk))
            (push! stk one)
            (push! stk two)]))
   
@@ -133,7 +131,8 @@
            (raise-argument-error 'push-over "stack-length >= 2"
                                  (stack-length stk))]
           [else
-           (define two (top (pop stk)))
+           (define-values (one rst) (pop stk))
+           (define two (top rst))
            (push stk two)]))
   
   (: push-over! (All (A) ((Stack A) -> Void)))
@@ -142,7 +141,8 @@
            (raise-argument-error 'push-over! "stack-length >= 2"
                                  (stack-length stk))]
           [else
-           (define two (top (pop stk)))
+           (define-values (one rst) (pop stk))
+           (define two (top rst))
            (push! stk two)]))
   
   ; rotates the top three items downward
@@ -184,8 +184,9 @@
     (cond [(< (stack-length stk) 2)
            (raise-argument-error 'pop-nip "stack-length >= 2" (stack-length stk))]
           [else
-           (define val (top stk))
-           (push (pop (pop stk)) val)]))
+           (define-values (one rst1) (pop stk))
+           (define-values (two rst2) (pop rst1))
+           (push rst2 one)]))
   
   (: pop-nip! (All (A) ((Stack A) -> Void)))
   (define (pop-nip! stk)

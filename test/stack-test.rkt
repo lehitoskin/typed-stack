@@ -10,7 +10,7 @@
 (check-equal? 0 (stack-length (empty-stack)))
 
 (check-false (stack-empty? (push (empty-stack) 'a)))
-(check-equal? (stack->list (pop (empty-stack))) '())
+(check-equal? (stack->list (empty-stack)) '())
 (check-eq? 'a (top (push (empty-stack) 'a)))
 
 ; stack->list
